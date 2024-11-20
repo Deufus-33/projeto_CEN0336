@@ -1,0 +1,45 @@
+#!/usr/bin/env python3
+import requests
+import time
+import random
+#import serial #utilizado no dispenser real
+
+# INPUT DE DADOS - INÍCIO #
+# CONFIGURAÇÃO DO DISPENSER FÍSICO (Parcial)
+
+#dispenser = serial.Serial(port='/dev/ttyUSB0',baudrate=9600,timeout=1) #configura a porta com o sistema de alimentação
+
+def abrir_dispenser():
+    print('abrindo o dispenser...')
+    #dispenser.write(b'abrir\n')
+    time.sleep(1)
+
+def fechar_dispenser():
+    print('dispenser fechado')
+    #dispenser.write(b'fechar\n')
+    time.sleep(1)
+
+# ADICIONAR REGRA DE VALIDAÇÃO DO INPUT argparse
+
+peso_da_sobra = round(random.uniform(0,300), 2) #recebe informação de uma balança (simulação)
+print(f'A balança registrou uma sobra de {peso_da_sobra}g')
+
+peso_dieta_ideal = 301
+
+ajust = 1-(peso_da_sobra - int(peso_da_sobra)) #ajusta a quantidade de ração a ser disponibilizada
+peso_da_sobra_ajust = peso_da_sobra + ajust
+
+peso_da_reposicao = peso_dieta_ideal - peso_da_sobra_ajust
+print(f"O peso da reposição será de: {peso_da_reposicao}g.")
+
+peso_inicial = peso_da_sobra_ajust
+
+abrir_dispenser()
+
+while peso_inicial < peso_dieta_ideal:
+  peso_inicial = peso_inicial + 1 #estimativa de 10g/s saindo do dispenser
+  time.sleep(0.1)
+  print(f"Peso atual do comedouro em: {peso_inicial}g.")
+  if peso_inicial == 301:
+      fechar_dispenser()
+print('Fim')
